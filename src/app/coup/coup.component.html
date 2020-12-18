@@ -1,0 +1,6 @@
+<div class="middle-container">
+  <span *ngFor="let card of cards">
+    <img *ngIf="!card.isGuessed" (click)="cardClicked(card)" [src]="card.imgPath"
+         [ngStyle]="{'border': '8px solid ' + card.color}" class="card">
+  </span>
+</div>
