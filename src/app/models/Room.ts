@@ -4,13 +4,16 @@ import {User} from './User';
 export class Room {
   id: string;
   cards: Card[];
-  host: User;
-  otherUsers: User[];
+  users: User[];
+  whoseTurn: string;
+  isStarted: boolean;
 
-  constructor(id: string, cards: Card[], host: User, otherUsers: User[]) {
+
+  constructor(id: string, cards: Card[], users: User[], whoseTurn: string) {
     this.id = id;
     this.cards = cards;
-    this.host = host;
-    this.otherUsers = otherUsers;
+    this.users = users;
+    this.whoseTurn = whoseTurn;
+    this.isStarted = false;
   }
 }

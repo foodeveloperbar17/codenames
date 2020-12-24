@@ -21,8 +21,8 @@ export class DbService {
     return this.roomsCollection.doc(room.id).set(room);
   }
 
-  getRoom(roomId: string): Observable<DocumentData | undefined> {
-    return this.roomsCollection.doc(roomId.toString()).valueChanges();
+  getRoomListener(roomId: string): Observable<DocumentData | undefined> {
+    return this.roomsCollection.doc(roomId).valueChanges();
   }
 
   getRandomString(): string {
@@ -33,7 +33,11 @@ export class DbService {
   addUserToRoom(currentUser: User, roomId: string): void {
     const diffUser = Object.assign({}, currentUser);
     this.roomsCollection.doc(roomId).update({
-      otherUsers: firestore.FieldValue.arrayUnion(diffUser)
+      users: firestore.FieldValue.arrayUnion(diffUser)
     }).then(() => 'successfully added user').catch(() => 'meh error');
+  }
+
+  getRoom(roomId: string): Observable<firestore.DocumentSnapshot<DocumentData>> {
+    return this.roomsCollection.doc(roomId).get();
   }
 }

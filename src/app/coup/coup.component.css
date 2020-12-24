@@ -1,17 +1,53 @@
 .middle-container {
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 60px;
-  width: 65%;
-  height: 60%;
+  display: block;
+  margin: 0 auto;
+  width: 858px;
+  height: 458px;
   background-color: #808080;
-  padding-right: -50px;
-
   border: 1px solid red;
-  /*background: lawngreen;*/
+}
+
+.big-container {
+  margin: 100px auto;
+  width: 100%;
+  text-align: center;
 }
 
 .card {
-  width: 16%;
-  margin: 1%;
+  display: inline-block;
+  width: 150px;
+  height: 90px;
+  margin: 10px;
+}
+
+.card-content {
+  width: 150px;
+  height: 90px;
+}
+
+.card-cover {
+  width: 150px;
+  height: 20px;
+}
+
+button {
+  background-color: #ffa100;
+}
+
+.main-container-red {
+  width: 100vw;
+  height: 100vh;
+  background-image: url("https://cdn.codenames.game/img/bg-red.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.main-container-blue {
+  width: 100vw;
+  height: 100vh;
+  background-image: url("https://cdn.codenames.game/img/bg-blue.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }

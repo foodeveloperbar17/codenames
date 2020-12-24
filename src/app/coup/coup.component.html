@@ -1,17 +1,92 @@
-
-
-<div style="margin: 100px auto; width: 80%; text-align: center" *ngIf="currentUser.id===''">
-  <mat-form-field>
-    <input matInput [(ngModel)]="currentUser.nickname">
-  </mat-form-field>
+<div class="big-container" *ngIf="currentUser.id===''">
+  <div>
+    <mat-form-field>
+      <input matInput [(ngModel)]="currentUser.nickname">
+    </mat-form-field>
+  </div>
   <button mat-button (click)="joinUser()">join game</button>
+</div>
+
+<div class="big-container" *ngIf="room && !room.isStarted && currentUser.id !== ''">
+  <div style="display: block; margin: 50px auto; width: 200px;">
+    <ol>
+      <li *ngFor="let spectator of spectators as User">
+        {{spectator.nickname}}
+      </li>
+    </ol>
+  </div>
+
+  <div *ngIf="currentUser.isHost">
+    <button mat-button (click)="startGame()">Start Game</button>
+  </div>
+
+  <div style="background-color: #f83535; padding: 20px; float: left; width: 200px">
+    <div style="margin: 10px">
+      Operatives
+      <ol>
+        <li *ngFor="let redOperative of redOperatives as User">
+          {{redOperative.nickname}}
+        </li>
+      </ol>
+      <button mat-button (click)="joinTeamAndGroup('red', false)">Join As Operative</button>
+    </div>
+
+    <div style="margin: 10px">
+      Spymasters
+      <ol>
+        <li *ngFor="let redSpymaster of redSpymasters as User">
+          {{redSpymaster.nickname}}
+        </li>
+      </ol>
+      <button mat-button (click)="joinTeamAndGroup('red', true)">Join As Spymaster</button>
+    </div>
+  </div>
+
+
+  <div style="background-color: cornflowerblue; padding: 20px; float: right; width: 200px">
+    <div style="margin: 10px">
+      Operatives
+      <ol>
+        <li *ngFor="let blueOperative of blueOperatives as User">
+          {{blueOperative.nickname}}
+        </li>
+      </ol>
+      <button mat-button (click)="joinTeamAndGroup('blue', false)">Join As Operative</button>
+    </div>
+
+    <div style="margin: 10px">
+      Spymasters
+      <ol>
+        <li *ngFor="let blueSpymaster of blueSpymasters as User">
+          {{blueSpymaster.nickname}}
+        </li>
+      </ol>
+      <button mat-button (click)="joinTeamAndGroup('blue', true)">Join As Spymaster</button>
+    </div>
+  </div>
 </div>
 
 
 <!--game-->
-<div class="middle-container" *ngIf="room && currentUser.id !== ''">
-  <span *ngFor="let card of room.cards">
-    <img *ngIf="!card.isGuessed" (click)="cardClicked(card)" [src]="card.imgPath"
-         [ngStyle]="{'border': '8px solid ' + card.color}" class="card">
-  </span>
+<div *ngIf="room && currentUser.id !== '' && room.isStarted"
+     [class.main-container-red]="room.whoseTurn==='red'"
+     [class.main-container-blue]="room.whoseTurn==='blue'">
+
+  <div style="height: 100px;">
+
+  </div>
+  <div class="middle-container">
+    <div *ngFor="let card of room.cards" class="card">
+      <img *ngIf="!card.isGuessed" [src]="card.imgPath" class="card-content" (click)="cardClicked(card)"
+           [ngStyle]="{'border': '4px solid ' + (currentUser.isSpymaster ? card.color : 'gray')}" class="card-content">
+
+      <div *ngIf="card.isGuessed && !card.isRevealed"  class="card-content"
+           [ngStyle]="{'background-color':card.color, 'border': '0px solid ' + card.color}"
+           (click)="guessedCardClicked(card)"></div>
+      <!--    TODO: overlay should be added-->
+
+      <!--    <div *ngIf="card.isGuessed && card.isRevealed" style="display: inline-block;" class="card-cover"-->
+      <!--         [ngStyle]="{'background-color':card.color}" (click)="guessedCardClicked(card)"></div>-->
+    </div>
+  </div>
 </div>

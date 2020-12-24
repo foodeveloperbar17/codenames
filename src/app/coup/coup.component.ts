@@ -4,6 +4,7 @@ import {ActivatedRoute} from '@angular/router';
 import {User} from '../models/User';
 import {Room} from '../models/Room';
 import {DbService} from '../../services/db.service';
+import {DocumentData} from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-coup',
@@ -12,7 +13,7 @@ import {DbService} from '../../services/db.service';
 })
 export class CoupComponent implements OnInit {
 
-  currentUser: User = new User('', '', false);
+  currentUser: User = new User('', '', 'spectator', false);
 
   room: Room | undefined;
   roomId: string | undefined;
@@ -25,23 +26,36 @@ export class CoupComponent implements OnInit {
       this.roomId = params.id;
       if (params.hasOwnProperty('room')) {
         this.room = JSON.parse(params.room) as Room;
-        this.currentUser = this.room.host;
-        this.dbService.saveRoom(this.room);
-        this.addRoomListener();
+        this.currentUser = this.room.users[0];
+        this.dbService.getRoom(this.roomId as string).subscribe(docSnapshot => {
+          if (docSnapshot.exists) {
+            this.room = docSnapshot.data() as Room;
+          } else {
+            this.dbService.saveRoom(this.room as Room);
+          }
+        });
       } else {
-        this.addRoomListener();
+        this.dbService.getRoom(this.roomId as string).subscribe(roomDoc => {
+            if (roomDoc.exists) {
+              this.room = roomDoc.data() as Room;
+            } else {
+              console.log('Something bad happens hereee');
+            }
+          }
+        );
       }
+      this.addRoomListener();
     });
   }
 
   addRoomListener(): void {
-    this.dbService.getRoom(this.roomId as string).subscribe(roomDocument => {
+    this.dbService.getRoomListener(this.roomId as string).subscribe(roomDocument => {
         if (roomDocument !== undefined) {
           this.room = roomDocument as Room;
-          console.log(roomDocument);
         } else {
           console.log('no room data');
         }
+
       }
     );
   }
@@ -50,18 +64,79 @@ export class CoupComponent implements OnInit {
     if (!card.isGuessed) {
       card.isGuessed = true;
     }
-    //  TODO: add animation of reveal
+    this.dbService.saveRoom(this.room as Room);
   }
 
   joinUser(): void {
-    console.log('joined user');
-    console.log(this.currentUser.nickname);
-    console.log(!this.currentUser.nickname);
     if (!this.currentUser.nickname) {
       this.currentUser.nickname = 'I Told you to enter your nickname';
     }
     this.currentUser.id = this.dbService.getRandomString();
 
     this.dbService.addUserToRoom(this.currentUser, this.roomId as string);
+  }
+
+  guessedCardClicked(card: Card): void {
+    // card.isRevealed = !card.isRevealed;
+  }
+
+  get redOperatives(): User[] {
+    return this.filterWithTeamAndGroup('red', false);
+  }
+
+  get redSpymasters(): User[] {
+    return this.filterWithTeamAndGroup('red', true);
+  }
+
+  get blueOperatives(): User[] {
+    return this.filterWithTeamAndGroup('blue', false);
+  }
+
+  get blueSpymasters(): User[] {
+    return this.filterWithTeamAndGroup('blue', true);
+  }
+
+  get spectators(): User[] {
+    if (this.room === undefined) {
+      return [];
+    } else {
+      return this.room.users.filter(user => user.team === 'spectator');
+    }
+  }
+
+  filterWithTeamAndGroup(team: string, isSpymaster: boolean): User[] {
+    if (this.room === undefined) {
+      return [];
+    } else {
+      return this.room.users.filter(user => user.team === team && user.isSpymaster === isSpymaster);
+    }
+  }
+
+  joinTeamAndGroup(team: string, isSpyMaster: boolean): void {
+    this.currentUser.team = team;
+    this.currentUser.isSpymaster = isSpyMaster;
+    const index = this.room?.users.findIndex(user => user.id === this.currentUser.id) as number;
+    if (index !== -1 && this.room?.users !== undefined) {
+      this.room.users[index].team = team;
+      this.room.users[index].isSpymaster = isSpyMaster;
+    } else {
+      console.log('there is a bug');
+    }
+    this.dbService.saveRoom(this.room as Room);
+  }
+
+  startGame(): void {
+    if (this.room !== undefined) {
+      if (this.room.users.length < 4) {
+        return;
+      }
+      if (this.redSpymasters.length > 0
+        && this.redOperatives.length > 0
+        && this.blueSpymasters.length > 0
+        && this.blueOperatives.length > 0) {
+        this.room.isStarted = true;
+        this.dbService.saveRoom(this.room);
+      }
+    }
   }
 }

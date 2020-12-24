@@ -33,10 +33,10 @@ export class HomePageComponent implements OnInit {
       hostName = this.nickname;
     }
     const hostId = this.dbService.getRandomString();
-    const host = new User(hostId, hostName, true);
+    const host = new User(hostId, hostName, 'spectator', true);
 
     const roomId = this.dbService.getRandomString();
-    const room = new Room(roomId, this.cards, host, []);
+    const room = new Room(roomId, this.cards, [host], 'red');
     this.router.navigate(['room/' + roomId, {room: JSON.stringify(room)}]);
   }
 
