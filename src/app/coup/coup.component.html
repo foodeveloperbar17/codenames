@@ -30,7 +30,9 @@
           {{redOperative.nickname}}
         </li>
       </ol>
-      <button mat-button (click)="joinTeamAndGroup('red', false)">Join As Operative</button>
+      <button mat-button *ngIf="!room.isStarted || (room.isStarted && !currentUser.isSpymaster)"
+              (click)="joinTeamAndGroup('red', false)">Join As Operative
+      </button>
     </div>
 
     <div style="margin: 10px">
@@ -40,7 +42,9 @@
           {{redSpymaster.nickname}}
         </li>
       </ol>
-      <button mat-button (click)="joinTeamAndGroup('red', true)">Join As Spymaster</button>
+      <button mat-button *ngIf="!spymasterExistsInTeam('red')"
+              (click)="joinTeamAndGroup('red', true)">Join As Spymaster
+      </button>
     </div>
   </div>
 
@@ -53,7 +57,9 @@
           {{blueOperative.nickname}}
         </li>
       </ol>
-      <button mat-button (click)="joinTeamAndGroup('blue', false)">Join As Operative</button>
+      <button mat-button *ngIf="!room.isStarted || (room.isStarted && !currentUser.isSpymaster)"
+              (click)="joinTeamAndGroup('blue', false)">Join As Operative
+      </button>
     </div>
 
     <div style="margin: 10px">
@@ -63,7 +69,8 @@
           {{blueSpymaster.nickname}}
         </li>
       </ol>
-      <button mat-button (click)="joinTeamAndGroup('blue', true)">Join As Spymaster</button>
+      <button mat-button *ngIf="!spymasterExistsInTeam('blue')"
+              (click)="joinTeamAndGroup('blue', true)">Join As Spymaster</button>
     </div>
   </div>
 </div>

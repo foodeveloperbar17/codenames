@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {Card} from '../models/Card';
 import {ActivatedRoute} from '@angular/router';
 import {User} from '../models/User';
@@ -16,6 +16,14 @@ export class CoupComponent implements OnInit {
 
   room: Room | undefined;
   roomId: string | undefined;
+
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnloadHandler(): void {
+    if (this.currentUser.id !== '' && this.room !== undefined) {
+      this.room.users = this.room.users.filter(user => user.id !== this.currentUser.id);
+      this.dbService.saveRoom(this.room);
+    }
+  }
 
   constructor(private route: ActivatedRoute, private dbService: DbService) {
   }
@@ -66,20 +74,23 @@ export class CoupComponent implements OnInit {
     if (!card.isGuessed && this.room.isGuessing && !this.currentUser.isSpymaster
       && this.currentUser.team === this.room.whoseTurn && !this.room.isFinished) {
       card.isGuessed = true;
+
+      if (this.checkForTeamWin('red')) {
+        this.room.winnerTeam = 'red';
+        this.room.isFinished = true;
+        return;
+      }
+      if (this.checkForTeamWin('blue')) {
+        this.room.winnerTeam = 'blue';
+        this.room.isFinished = true;
+        return;
+      }
+
       if (card.color !== this.currentUser.team) {
         this.changeTurn();
         this.checkForAssasin(card);
       } else if (--this.room.numTries === 0) {
         this.changeTurn();
-      }
-
-      if (this.checkForTeamWin('red')) {
-        this.room.winnerTeam = 'red';
-        this.room.isFinished = true;
-      }
-      if (this.checkForTeamWin('blue')) {
-        this.room.winnerTeam = 'blue';
-        this.room.isFinished = true;
       }
     }
 
@@ -185,6 +196,7 @@ export class CoupComponent implements OnInit {
   joinTeamAndGroup(team: string, isSpyMaster: boolean): void {
     this.currentUser.team = team;
     this.currentUser.isSpymaster = isSpyMaster;
+    // doing same for room user
     const index = this.room?.users.findIndex(user => user.id === this.currentUser.id) as number;
     if (index !== -1 && this.room?.users !== undefined) {
       this.room.users[index].team = team;
@@ -215,5 +227,12 @@ export class CoupComponent implements OnInit {
       this.room.isGuessing = true;
       this.dbService.saveRoom(this.room);
     }
+  }
+
+  spymasterExistsInTeam(team: string): boolean {
+    if (this.room === undefined) {
+      return false;
+    }
+    return this.room.users.filter(user => user.isSpymaster && user.team === team).length !== 0;
   }
 }
