@@ -17,6 +17,7 @@ export class HomePageComponent implements OnInit {
   NUM_CARDS = 20;
   cardTypes: string[] = [];
   randomedNumbersForCards: number[] = [];
+  randomedImagesForCards: number[] = [];
   cards: Card[] = [];
 
   constructor(private router: Router, private dbService: DbService) {
@@ -105,12 +106,12 @@ export class HomePageComponent implements OnInit {
   }
 
   private cardAlreadyExists(id: number): boolean {
-    for (const card of this.cards) {
-      if (card.id == id) {
-        return true;
-      }
+    if (this.randomedImagesForCards.includes(id)) {
+      return true;
+    } else {
+      this.randomedImagesForCards.push(id);
+      return false;
     }
-    return false;
   }
 
   private zeroPadToNumber(n: number, size: number): string {

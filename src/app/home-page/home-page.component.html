@@ -4,5 +4,5 @@
     <input matInput required [(ngModel)]="nickname">
   </mat-form-field>
   <br>
-  <button (click)="createGame()" mat-flat-button color="primary">Create Game</button>
+  <button (click)="createGame()" [disabled]="nickname===''" mat-flat-button color="primary">Create Game</button>
 </div>

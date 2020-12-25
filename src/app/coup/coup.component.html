@@ -1,10 +1,11 @@
 <div class="big-container" *ngIf="currentUser.id===''">
   <div>
     <mat-form-field>
+      <mat-label>Enter your name</mat-label>
       <input matInput [(ngModel)]="currentUser.nickname">
     </mat-form-field>
   </div>
-  <button mat-button (click)="joinUser()">join game</button>
+  <button mat-button (click)="joinUser()" [disabled]="currentUser.nickname===''">join game</button>
 </div>
 
 <div class="big-container" style="margin: 0;" *ngIf="room && currentUser.id !== ''">

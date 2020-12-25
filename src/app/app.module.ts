@@ -3,9 +3,7 @@ import {NgModule} from '@angular/core';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {CanvasComponent} from './canvas/canvas.component';
 import {MatButtonModule} from '@angular/material/button';
-import {CoupCanvasComponent} from './coup-canvas/coup-canvas.component';
 import {CoupComponent} from './coup/coup.component';
 import {HomePageComponent} from './home-page/home-page.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -19,8 +17,6 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 @NgModule({
   declarations: [
     AppComponent,
-    CanvasComponent,
-    CoupCanvasComponent,
     CoupComponent,
     HomePageComponent
   ],
