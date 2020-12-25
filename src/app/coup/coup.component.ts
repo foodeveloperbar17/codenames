@@ -4,7 +4,6 @@ import {ActivatedRoute} from '@angular/router';
 import {User} from '../models/User';
 import {Room} from '../models/Room';
 import {DbService} from '../../services/db.service';
-import {DocumentData} from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-coup',
@@ -61,10 +60,81 @@ export class CoupComponent implements OnInit {
   }
 
   cardClicked(card: Card): void {
-    if (!card.isGuessed) {
-      card.isGuessed = true;
+    if (this.room === undefined) {
+      return;
     }
+    if (!card.isGuessed && this.room.isGuessing && !this.currentUser.isSpymaster
+      && this.currentUser.team === this.room.whoseTurn && !this.room.isFinished) {
+      card.isGuessed = true;
+      if (card.color !== this.currentUser.team) {
+        this.changeTurn();
+        this.checkForAssasin(card);
+      } else if (--this.room.numTries === 0) {
+        this.changeTurn();
+      }
+
+      if (this.checkForTeamWin('red')) {
+        this.room.winnerTeam = 'red';
+        this.room.isFinished = true;
+      }
+      if (this.checkForTeamWin('blue')) {
+        this.room.winnerTeam = 'blue';
+        this.room.isFinished = true;
+      }
+    }
+
     this.dbService.saveRoom(this.room as Room);
+  }
+
+  changeTurn(): void {
+    if (this.room === undefined) {
+      return;
+    }
+    this.room.whoseTurn = this.secondTeam(this.room.whoseTurn);
+    this.room.isGuessing = false;
+    this.room.numTries = 0;
+    this.room.message = '';
+  }
+
+  secondTeam(team: string): string {
+    if (team === 'red') {
+      return 'blue';
+    } else if (team === 'blue') {
+      return 'red';
+    }
+    throw Error('invalid team');
+  }
+
+  checkForAssasin(card: Card): void {
+    if (this.room === undefined) {
+      return;
+    }
+    if (card.color === 'black') {
+      this.room.isFinished = true;
+      if (this.currentUser.team === 'red') {
+        this.room.winnerTeam = 'blue';
+      } else {
+        this.room.winnerTeam = 'red';
+      }
+    }
+  }
+
+  checkForTeamWin(team: string): boolean {
+    if (this.room === undefined) {
+      return false;
+    }
+    const length = this.room.cards.filter(c => !c.isGuessed && c.color === team).length;
+    console.log(length);
+    return length === 0;
+  }
+
+  isMyTurn(): boolean {
+    if (this.room?.whoseTurn === this.currentUser.team
+      && this.room?.isGuessing === !this.currentUser.isSpymaster) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   joinUser(): void {
@@ -137,6 +207,13 @@ export class CoupComponent implements OnInit {
         this.room.isStarted = true;
         this.dbService.saveRoom(this.room);
       }
+    }
+  }
+
+  sendHint(): void {
+    if (this.room !== undefined) {
+      this.room.isGuessing = true;
+      this.dbService.saveRoom(this.room);
     }
   }
 }

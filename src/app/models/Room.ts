@@ -7,6 +7,11 @@ export class Room {
   users: User[];
   whoseTurn: string;
   isStarted: boolean;
+  isGuessing: boolean;
+  message: string;
+  numTries: number;
+  isFinished: boolean;
+  winnerTeam: string;
 
 
   constructor(id: string, cards: Card[], users: User[], whoseTurn: string) {
@@ -15,5 +20,10 @@ export class Room {
     this.users = users;
     this.whoseTurn = whoseTurn;
     this.isStarted = false;
+    this.isGuessing = false;
+    this.message = '';
+    this.numTries = 0;
+    this.isFinished = false;
+    this.winnerTeam = '';
   }
 }

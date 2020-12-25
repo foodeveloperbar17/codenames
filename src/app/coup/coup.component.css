@@ -1,8 +1,8 @@
 .middle-container {
   display: block;
-  margin: 0 auto;
-  width: 858px;
-  height: 458px;
+  margin: 10px auto;
+  width: 865px;
+  height: 472px;
   background-color: #808080;
   border: 1px solid red;
 }
@@ -34,20 +34,34 @@ button {
   background-color: #ffa100;
 }
 
-.main-container-red {
+.main-container {
   width: 100vw;
   height: 100vh;
-  background-image: url("https://cdn.codenames.game/img/bg-red.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 }
 
-.main-container-blue {
-  width: 100vw;
-  height: 100vh;
+.background-red {
+  background-image: url("https://cdn.codenames.game/img/bg-red.jpg");
+}
+
+.background-blue {
   background-image: url("https://cdn.codenames.game/img/bg-blue.jpg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+}
+
+.hint-input {
+  background-color: #f8f6f2;
+  margin: 10px;
+  border-radius: 20px;
+}
+
+.message {
+  font-size: 25px;
+  color: #ECEFF1;
+}
+
+.message-container {
+  margin-top: 40px;
+  text-align: center;
 }

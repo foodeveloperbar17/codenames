@@ -7,8 +7,9 @@
   <button mat-button (click)="joinUser()">join game</button>
 </div>
 
-<div class="big-container" *ngIf="room && !room.isStarted && currentUser.id !== ''">
-  <div style="display: block; margin: 50px auto; width: 200px;">
+<div class="big-container" style="margin: 0;" *ngIf="room && currentUser.id !== ''">
+  <div *ngIf="!room.isStarted" style="display: block; margin: 50px auto; width: 200px;">
+    Spectators
     <ol>
       <li *ngFor="let spectator of spectators as User">
         {{spectator.nickname}}
@@ -16,11 +17,11 @@
     </ol>
   </div>
 
-  <div *ngIf="currentUser.isHost">
+  <div *ngIf="currentUser.isHost && !room.isStarted">
     <button mat-button (click)="startGame()">Start Game</button>
   </div>
 
-  <div style="background-color: #f83535; padding: 20px; float: left; width: 200px">
+  <div style="background-color: #f83535; padding: 20px; float: left; width: 200px; margin-top: 100px;">
     <div style="margin: 10px">
       Operatives
       <ol>
@@ -43,7 +44,7 @@
   </div>
 
 
-  <div style="background-color: cornflowerblue; padding: 20px; float: right; width: 200px">
+  <div style="background-color: cornflowerblue; padding: 20px; float: right; width: 200px; margin-top: 100px;">
     <div style="margin: 10px">
       Operatives
       <ol>
@@ -68,19 +69,20 @@
 
 
 <!--game-->
-<div *ngIf="room && currentUser.id !== '' && room.isStarted"
-     [class.main-container-red]="room.whoseTurn==='red'"
-     [class.main-container-blue]="room.whoseTurn==='blue'">
+<div *ngIf="room && currentUser.id !== '' && room.isStarted" class="main-container"
+     [class.background-red]="room.whoseTurn==='red'"
+     [class.background-blue]="room.whoseTurn==='blue'">
 
   <div style="height: 100px;">
 
   </div>
+
   <div class="middle-container">
     <div *ngFor="let card of room.cards" class="card">
       <img *ngIf="!card.isGuessed" [src]="card.imgPath" class="card-content" (click)="cardClicked(card)"
-           [ngStyle]="{'border': '4px solid ' + (currentUser.isSpymaster ? card.color : 'gray')}" class="card-content">
+           [ngStyle]="{'border': '6px solid ' + (currentUser.isSpymaster ? card.color : 'gray')}">
 
-      <div *ngIf="card.isGuessed && !card.isRevealed"  class="card-content"
+      <div *ngIf="card.isGuessed && !card.isRevealed" class="card-content"
            [ngStyle]="{'background-color':card.color, 'border': '0px solid ' + card.color}"
            (click)="guessedCardClicked(card)"></div>
       <!--    TODO: overlay should be added-->
@@ -88,5 +90,29 @@
       <!--    <div *ngIf="card.isGuessed && card.isRevealed" style="display: inline-block;" class="card-cover"-->
       <!--         [ngStyle]="{'background-color':card.color}" (click)="guessedCardClicked(card)"></div>-->
     </div>
+  </div>
+
+  <div *ngIf="currentUser.isSpymaster && currentUser.team === room.whoseTurn && !room.isGuessing && !room.isFinished"
+       style="text-align: center;">
+    <mat-form-field appearance="fill" class="hint-input">
+      <mat-label>enter hint</mat-label>
+      <input matInput [(ngModel)]="room.message">
+    </mat-form-field>
+    <mat-form-field style="width: 50px;" class="hint-input" appearance="fill">
+      <input matInput type="number" [maxLength]="1" [(ngModel)]="room.numTries">
+    </mat-form-field>
+    <button mat-button (click)="sendHint()">send hint</button>
+  </div>
+
+  <div *ngIf=" room.isGuessing && !room.isFinished"
+       class="message-container">
+    <mat-label class="message">
+      hint is {{room.message}}, number of times is {{room.numTries}}
+    </mat-label>
+  </div>
+  <div *ngIf="room.isFinished" class="message-container">
+    <mat-label class="message">
+      {{room.winnerTeam}} team wins (you win <3)
+    </mat-label>
   </div>
 </div>
