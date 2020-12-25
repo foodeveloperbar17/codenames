@@ -84,7 +84,7 @@ export class HomePageComponent implements OnInit {
 
   randomInitCards(): void {
     for (let i = 0; i < this.NUM_CARDS; i++) {
-      const imgPath = this.getImagePath(273);
+      const imgPath = this.getImagePath(180);
       this.cards.push(new Card(i, imgPath, this.cardTypes[i]));
     }
   }
