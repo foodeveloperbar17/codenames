@@ -1,6 +1,6 @@
 <div class="big-container" *ngIf="currentUser.id===''">
   <div>
-    <mat-form-field>
+    <mat-form-field appearance="fill">
       <mat-label>Enter your name</mat-label>
       <input matInput [(ngModel)]="currentUser.nickname">
     </mat-form-field>
@@ -9,7 +9,7 @@
 </div>
 
 <div class="big-container" style="margin: 0;" *ngIf="room && currentUser.id !== ''">
-  <div *ngIf="!room.isStarted" style="display: block; margin: 50px auto; width: 200px;">
+  <div *ngIf="!room.isStarted" style="display: block; margin: 40px auto; width: 200px;">
     Spectators
     <ol>
       <li *ngFor="let spectator of spectators as User">
@@ -22,9 +22,9 @@
     <button mat-button (click)="startGame()">Start Game</button>
   </div>
 
-  <div style="background-color: #f83535; padding: 20px; float: left; width: 200px; margin-top: 100px;">
+  <div class="team-container" style="background-color: #f83535; float: left;">
     <div style="margin: 10px">
-      Operatives
+      Operatives (guessers)
       <ol>
         <li *ngFor="let redOperative of redOperatives as User">
           {{redOperative.nickname}}
@@ -36,7 +36,7 @@
     </div>
 
     <div style="margin: 10px">
-      Spymasters
+      Spymasters (explainers)
       <ol>
         <li *ngFor="let redSpymaster of redSpymasters as User">
           {{redSpymaster.nickname}}
@@ -49,9 +49,9 @@
   </div>
 
 
-  <div style="background-color: cornflowerblue; padding: 20px; float: right; width: 200px; margin-top: 100px;">
+  <div class="team-container" style="background-color: #3677ee; float: right;">
     <div style="margin: 10px">
-      Operatives
+      Operatives (guessers)
       <ol>
         <li *ngFor="let blueOperative of blueOperatives as User">
           {{blueOperative.nickname}}
@@ -63,14 +63,15 @@
     </div>
 
     <div style="margin: 10px">
-      Spymasters
+      Spymasters (explainers)
       <ol>
         <li *ngFor="let blueSpymaster of blueSpymasters as User">
           {{blueSpymaster.nickname}}
         </li>
       </ol>
       <button mat-button *ngIf="!spymasterExistsInTeam('blue')"
-              (click)="joinTeamAndGroup('blue', true)">Join As Spymaster</button>
+              (click)="joinTeamAndGroup('blue', true)">Join As Spymaster
+      </button>
     </div>
   </div>
 </div>
@@ -81,22 +82,28 @@
      [class.background-red]="room.whoseTurn==='red'"
      [class.background-blue]="room.whoseTurn==='blue'">
 
-  <div style="height: 100px;">
-
+  <div style="height: 100px; color: #ECEFF1">
+    <div class="cards-left-container" style="float: left; text-align: left">
+      Red cards left: {{cardsLeft('red')}}
+    </div>
+    <div class="cards-left-container" style="float: right; text-align: right">
+      Blue cards left: {{cardsLeft('blue')}}
+    </div>
   </div>
 
   <div class="middle-container">
-    <div *ngFor="let card of room.cards" class="card">
-      <img *ngIf="!card.isGuessed" [src]="card.imgPath" class="card-content" (click)="cardClicked(card)"
+    <div *ngFor="let card of room.cards; let i = index;" class="card">
+      <img *ngIf="!card.isGuessed || (card.isGuessed && cardsIsRevealed[i])"
+           [src]="card.imgPath" class="card-content" (click)="cardClicked(card)"
            [ngStyle]="{'border': '6px solid ' + (currentUser.isSpymaster ? card.color : 'gray')}">
 
-      <div *ngIf="card.isGuessed && !card.isRevealed" class="card-content"
-           [ngStyle]="{'background-color':card.color, 'border': '0px solid ' + card.color}"
-           (click)="guessedCardClicked(card)"></div>
-      <!--    TODO: overlay should be added-->
+      <div *ngIf="card.isGuessed && !cardsIsRevealed[i]" class="card-content"
+           [ngStyle]="{'background-color':card.color, 'border': '6px solid gray'}"
+           (click)="guessedCardClicked(i)"></div>
 
-      <!--    <div *ngIf="card.isGuessed && card.isRevealed" style="display: inline-block;" class="card-cover"-->
-      <!--         [ngStyle]="{'background-color':card.color}" (click)="guessedCardClicked(card)"></div>-->
+      <div *ngIf="card.isGuessed && cardsIsRevealed[i]" class="card-cover"
+           [ngStyle]="{'background-color':card.color, 'border': '6px solid gray'}"
+           (click)="guessedCardClicked(i)"></div>
     </div>
   </div>
 

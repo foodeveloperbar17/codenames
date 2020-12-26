@@ -17,6 +17,11 @@ export class CoupComponent implements OnInit {
   room: Room | undefined;
   roomId: string | undefined;
 
+  cardsIsRevealed: boolean[] = [false, false, false, false, false,
+    false, false, false, false, false,
+    false, false, false, false, false,
+    false, false, false, false, false];
+
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(): void {
     if (this.currentUser.id !== '' && this.room !== undefined) {
@@ -157,8 +162,8 @@ export class CoupComponent implements OnInit {
     this.dbService.addUserToRoom(this.currentUser, this.roomId as string);
   }
 
-  guessedCardClicked(card: Card): void {
-    // card.isRevealed = !card.isRevealed;
+  guessedCardClicked(index: number): void {
+    this.cardsIsRevealed[index] = !this.cardsIsRevealed[index];
   }
 
   get redOperatives(): User[] {
@@ -234,5 +239,12 @@ export class CoupComponent implements OnInit {
       return false;
     }
     return this.room.users.filter(user => user.isSpymaster && user.team === team).length !== 0;
+  }
+
+  cardsLeft(team: string): string {
+    if (this.room === undefined) {
+      return '';
+    }
+    return this.room.cards.filter(card => !card.isGuessed && card.color === team).length.toString();
   }
 }
