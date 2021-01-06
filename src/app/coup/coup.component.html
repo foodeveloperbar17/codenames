@@ -102,12 +102,9 @@
            [src]="card.imgPath" class="card-content" (click)="cardClicked(card)"
            [ngStyle]="{'border': '6px solid ' + (currentUser.isSpymaster ? card.color : 'gray')}">
 
-      <div *ngIf="card.isGuessed && !cardsIsRevealed[i]" class="card-content"
-           [ngStyle]="{'background-color':card.color, 'border': '6px solid gray'}"
-           (click)="guessedCardClicked(i)"></div>
-
-      <div *ngIf="card.isGuessed && cardsIsRevealed[i]" class="card-cover"
-           [ngStyle]="{'background-color':card.color, 'border': '6px solid gray'}"
+      <div *ngIf="card.isGuessed" class="card-content image-container"
+           [class.small-card-content]="cardsIsRevealed[i]"
+           [ngStyle]="{'background-image': 'url(' + coverImage(card) + ')', 'border': '6px solid gray'}"
            (click)="guessedCardClicked(i)"></div>
     </div>
   </div>

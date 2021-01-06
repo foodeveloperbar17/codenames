@@ -4,7 +4,6 @@ import {ActivatedRoute} from '@angular/router';
 import {User} from '../models/User';
 import {Room} from '../models/Room';
 import {DbService} from '../../services/db.service';
-import {host} from '@angular-devkit/build-angular/src/test-utils';
 
 @Component({
   selector: 'app-coup',
@@ -35,7 +34,6 @@ export class CoupComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(window.location.hostname);
     this.route.params.subscribe(params => {
       this.roomId = params.id;
       if (params.hasOwnProperty('room')) {
@@ -142,7 +140,6 @@ export class CoupComponent implements OnInit {
       return false;
     }
     const length = this.room.cards.filter(c => !c.isGuessed && c.color === team).length;
-    console.log(length);
     return length === 0;
   }
 
@@ -251,14 +248,24 @@ export class CoupComponent implements OnInit {
   }
 
   getRoomLink(): string {
-    if (this.room === undefined) {
-      return '';
-    }
     const hostname = window.location.hostname;
-    console.log(hostname);
     if (hostname === 'localhost') {
-      return hostname + ':4200/room/' + this.room.id;
+      return hostname + ':4200/room/' + this.roomId;
     }
-    return hostname + '/room/' + this.room.id;
+    return hostname + '/room/' + this.roomId;
+  }
+
+  coverImage(card: Card): string {
+    let result = 'assets/images/';
+    if (card.color === 'red') {
+      result += 'redcodenames.jpg';
+    } else if (card.color === 'blue') {
+      result += 'bluecodenames.jpg';
+    } else if (card.color === 'white') {
+      result += 'whitecodenames.jpg';
+    } else {
+      result += 'assassincodenames.jpg';
+    }
+    return result;
   }
 }
