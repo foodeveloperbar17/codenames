@@ -42,7 +42,7 @@
 }
 
 .small-card-content {
-  height: 10%;
+  opacity: 0.3;
 }
 
 button {

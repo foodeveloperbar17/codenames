@@ -103,8 +103,8 @@
            [ngStyle]="{'border': '6px solid ' + (currentUser.isSpymaster ? card.color : 'gray')}">
 
       <div *ngIf="card.isGuessed" class="card-content image-container"
-           [class.small-card-content]="cardsIsRevealed[i]"
            [ngStyle]="{'background-image': 'url(' + coverImage(card) + ')', 'border': '6px solid gray'}"
+           [class.small-card-content]="cardsIsRevealed[i]"
            (click)="guessedCardClicked(i)"></div>
     </div>
   </div>
