@@ -13,6 +13,7 @@ import {MatInputModule} from '@angular/material/input';
 import { environment } from 'src/environments/environment';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import {ClipboardModule} from '@angular/cdk/clipboard';
 
 @NgModule({
   declarations: [
@@ -20,17 +21,18 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
     CoupComponent,
     HomePageComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    MatButtonModule,
-    BrowserAnimationsModule,
-    MatFormFieldModule,
-    FormsModule,
-    MatInputModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFirestoreModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        MatButtonModule,
+        BrowserAnimationsModule,
+        MatFormFieldModule,
+        FormsModule,
+        MatInputModule,
+        AngularFireModule.initializeApp(environment.firebaseConfig),
+        AngularFirestoreModule,
+        ClipboardModule
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

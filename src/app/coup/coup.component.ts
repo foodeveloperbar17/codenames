@@ -4,6 +4,7 @@ import {ActivatedRoute} from '@angular/router';
 import {User} from '../models/User';
 import {Room} from '../models/Room';
 import {DbService} from '../../services/db.service';
+import {host} from '@angular-devkit/build-angular/src/test-utils';
 
 @Component({
   selector: 'app-coup',
@@ -34,6 +35,7 @@ export class CoupComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(window.location.hostname);
     this.route.params.subscribe(params => {
       this.roomId = params.id;
       if (params.hasOwnProperty('room')) {
@@ -246,5 +248,17 @@ export class CoupComponent implements OnInit {
       return '';
     }
     return this.room.cards.filter(card => !card.isGuessed && card.color === team).length.toString();
+  }
+
+  getRoomLink(): string {
+    if (this.room === undefined) {
+      return '';
+    }
+    const hostname = window.location.hostname;
+    console.log(hostname);
+    if (hostname === 'localhost') {
+      return hostname + ':4200/room/' + this.room.id;
+    }
+    return hostname + '/room/' + this.room.id;
   }
 }

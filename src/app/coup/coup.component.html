@@ -1,5 +1,5 @@
 <div class="big-container" *ngIf="currentUser.id===''">
-  <div>
+  <div style="margin-top: 100px;">
     <mat-form-field appearance="fill">
       <mat-label>Enter your name</mat-label>
       <input matInput [(ngModel)]="currentUser.nickname">
@@ -8,8 +8,14 @@
   <button mat-button (click)="joinUser()" [disabled]="currentUser.nickname===''">join game</button>
 </div>
 
-<div class="big-container" style="margin: 0;" *ngIf="room && currentUser.id !== ''">
-  <div *ngIf="!room.isStarted" style="display: block; margin: 40px auto; width: 200px;">
+<div style="position: absolute; left: 10px; top: 10px;" *ngIf="room">
+  <button mat-button style="border-radius: 20px;" [cdkCopyToClipboard]="getRoomLink()">
+    Copy Link
+  </button>
+</div>
+
+<div class="big-container" *ngIf="room && currentUser.id !== ''">
+  <div *ngIf="!room.isStarted" style="display: block; margin: 100px auto; width: 200px;">
     Spectators
     <ol>
       <li *ngFor="let spectator of spectators as User">
@@ -17,12 +23,11 @@
       </li>
     </ol>
   </div>
-
   <div *ngIf="currentUser.isHost && !room.isStarted">
     <button mat-button (click)="startGame()">Start Game</button>
   </div>
 
-  <div class="team-container" style="background-color: #f83535; float: left;">
+  <div class="team-container" style="background-color: #f83535; float: left; margin-left: 10px">
     <div style="margin: 10px">
       Operatives (guessers)
       <ol>
@@ -49,7 +54,7 @@
   </div>
 
 
-  <div class="team-container" style="background-color: #3677ee; float: right;">
+  <div class="team-container" style="background-color: #3677ee; float: right; margin-right: 10px;">
     <div style="margin: 10px">
       Operatives (guessers)
       <ol>
